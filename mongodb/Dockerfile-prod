@@ -1,0 +1,10 @@
+FROM mongo:5.0
+
+RUN chown rabbitmq:rabbitmq /etc/rabbitmq/rabbitmq.conf
+RUN chown -R admin:admin /var/www/myapp
+
+RUN chmod 775 /var/www/myapp
+
+USER 1001
+
+# CMD ["rabbitmq-server"]
