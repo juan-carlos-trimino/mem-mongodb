@@ -1,10 +1,36 @@
 FROM mongo:5.0
 
-RUN chown rabbitmq:rabbitmq /etc/rabbitmq/rabbitmq.conf
-RUN chown -R admin:admin /var/www/myapp
+COPY ./entrypoint.sh /docker-entrypoint-initdb.d
 
-RUN chmod 775 /var/www/myapp
+# Due to the tightened security restrictions of OpenShift, containers that run on Docker and K8s
+# might not run successfully on OpenShift without modification. In Docker and K8s, containers are
+# run either as the user specified by the USER directive in the Dockerfile, or as the root user if
+# a USER directive is not specified. Containerized applications designed to run as the root user
+# might not run as expected on OpenShift.
+#
+# In contrast, OpenShift runs containers using an arbitrarily assigned user ID, and the group ID
+# must always be set to the root group (0). Hence, directories and files that the processes running
+# in the image need to access should have their group ownership set to the root group; they also
+# need to be read/writable by that group. Furthermore, because OpenShift assigns an arbitrary user
+# ID and a group ID of zero (0), SecurityContext directives, such as runAsUser and runAsGroup, must
+# not appear in the deployment specifications when running on OpenShift. Enabling SecurityContext
+# directives causes the deployment to fail.
+#
+# InitContainers
+# When running in K8s, initContainers are sometimes used to set the permissions of files and
+# directories used by other containers in the pod. This technique relies on K8s running
+# initContainers as the root user and running other containers as the user specified in the Docker
+# directive USER. But when running in OpenShift, both initContainers and regular containers use the
+# OpenShift-assigned user ID. Therefore, the permissions in initContainers are the same as the
+# permissions in regular containers running in the same pod.
+RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
+    chmod -R g=u /docker-entrypoint-initdb.d && \
+    chgrp -R 0 /usr/local/bin && \
+    chmod -R g=u /usr/local/bin
 
 USER 1001
 
-# CMD ["rabbitmq-server"]
+EXPOSE 27017
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["mongod"]

@@ -4,3 +4,6 @@
 # to images using ADD or COPY.
 # Ignore everything
 **
+
+# Include this file...
+!./scripts/entrypoint.sh
