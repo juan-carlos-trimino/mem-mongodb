@@ -1,6 +1,6 @@
 FROM mongo:5.0
 
-COPY ./entrypoint.sh /docker-entrypoint-initdb.d
+COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 
 # Due to the tightened security restrictions of OpenShift, containers that run on Docker and K8s
 # might not run successfully on OpenShift without modification. In Docker and K8s, containers are
@@ -26,7 +26,9 @@ COPY ./entrypoint.sh /docker-entrypoint-initdb.d
 RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
     chmod -R g=u /docker-entrypoint-initdb.d && \
     chgrp -R 0 /usr/local/bin && \
-    chmod -R g=u /usr/local/bin
+    chmod -R g=u /usr/local/bin && \
+    chgrp -R 0 /var/log/mongodb && \
+    chmod -R g=u /var/log/mongodb
 
 USER 1001
 
