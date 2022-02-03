@@ -33,6 +33,3 @@ RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
 USER 1001
 
 EXPOSE 27017
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["mongod"]
