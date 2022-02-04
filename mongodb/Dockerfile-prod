@@ -1,4 +1,4 @@
-FROM mongo:5.0
+FROM mongo:5-focal
 
 COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 
