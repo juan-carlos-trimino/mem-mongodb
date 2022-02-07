@@ -1,4 +1,4 @@
-FROM mongo:5-focal
+FROM mongo:5
 
 COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 
@@ -24,11 +24,20 @@ COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 # OpenShift-assigned user ID. Therefore, the permissions in initContainers are the same as the
 # permissions in regular containers running in the same pod.
 RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
+    # entrypoint.sh \
     chmod -R g=u /docker-entrypoint-initdb.d && \
     chgrp -R 0 /usr/local/bin && \
+    # docker-entrypoint.sh \
     chmod -R g=u /usr/local/bin && \
     chgrp -R 0 /var/log/mongodb && \
-    chmod -R g=u /var/log/mongodb
+    # logs \
+    chmod -R g=u /var/log/mongodb && \
+    chgrp -R 0 /usr/bin && \
+    # mongod \
+    chmod -R g=u /usr/bin
+    # chgrp -R 0 /var/run/mongodb && \
+    # # mongod.pid \
+    # chmod -R g=u /var/run/mongodb
 
 USER 1001
 
