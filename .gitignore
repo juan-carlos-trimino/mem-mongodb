@@ -11,6 +11,3 @@
 mongodb/*
 !mongodb/.dockerignore
 !mongodb/Dockerfile-prod
-!mongodb/scripts
-mongodb/scripts/*
-!mongodb/scripts/entrypoint.sh
