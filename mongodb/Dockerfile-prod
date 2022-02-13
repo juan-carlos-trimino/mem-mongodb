@@ -1,6 +1,8 @@
-FROM mongo:5
+FROM mongo:5-focal
 
-COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
+# COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
+
+# COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 
 # Due to the tightened security restrictions of OpenShift, containers that run on Docker and K8s
 # might not run successfully on OpenShift without modification. In Docker and K8s, containers are
@@ -23,10 +25,10 @@ COPY ./scripts/entrypoint.sh /docker-entrypoint-initdb.d
 # directive USER. But when running in OpenShift, both initContainers and regular containers use the
 # OpenShift-assigned user ID. Therefore, the permissions in initContainers are the same as the
 # permissions in regular containers running in the same pod.
-RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
-    # entrypoint.sh \
-    chmod -R g=u /docker-entrypoint-initdb.d && \
-    chgrp -R 0 /usr/local/bin && \
+# RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
+#     # entrypoint.sh \
+#     chmod -R g=u /docker-entrypoint-initdb.d && \
+RUN chgrp -R 0 /usr/local/bin && \
     # docker-entrypoint.sh \
     chmod -R g=u /usr/local/bin && \
     chgrp -R 0 /var/log/mongodb && \
@@ -35,10 +37,18 @@ RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
     chgrp -R 0 /usr/bin && \
     # mongod \
     chmod -R g=u /usr/bin
+    # mkdir -p /var/run/mongodb && \
     # chgrp -R 0 /var/run/mongodb && \
     # # mongod.pid \
-    # chmod -R g=u /var/run/mongodb
+    # chmod -R g=u /var/run/mongodb && \
+    # chgrp -R 0 /usr/share/zoneinfo && \
+    # # mongod.pid \
+    # chmod -R g=u /usr/share/zoneinfo
 
 USER 1001
 
 EXPOSE 27017
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+CMD ["mongod"]

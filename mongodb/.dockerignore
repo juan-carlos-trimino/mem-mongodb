@@ -6,4 +6,5 @@
 **
 
 # Include this file...
-!./scripts/entrypoint.sh
+# !./scripts/entrypoint.sh
+# !./scripts/initreplica.js
