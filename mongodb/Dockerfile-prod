@@ -37,6 +37,9 @@ RUN chgrp -R 0 /usr/local/bin && \
     chgrp -R 0 /usr/bin && \
     # mongod \
     chmod -R g=u /usr/bin
+    # touch ~/.dbshell && \
+    # chgrp 0 ~/.dbshell && \
+    # chmod g=u ~/.dbshell
     # mkdir -p /var/run/mongodb && \
     # chgrp -R 0 /var/run/mongodb && \
     # # mongod.pid \
